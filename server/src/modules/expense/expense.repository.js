@@ -1,4 +1,5 @@
 const Expense = require("./expense.model");
+const TRANSACTION_TYPES = require("../../shared/constants/transactionTypes");
 
 const createExpense = async (expenseData) => {
   return await Expense.create(expenseData);
@@ -46,10 +47,41 @@ const updateExpense = async (expenseId, updateData) => {
   ).populate("category", "name icon color type");
 };
 
+const getTotalExpenseByDateRange = async (
+  userId,
+  startDate,
+  endDate
+) => {
+  const result = await Expense.aggregate([
+    {
+      $match: {
+        user: userId,
+        isDeleted: false,
+        transactionType: TRANSACTION_TYPES.EXPENSE,
+        date: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalExpense: {
+          $sum: "$amount",
+        },
+      },
+    },
+  ]);
+
+  return result[0]?.totalExpense || 0;
+};
+
 module.exports = {
   createExpense,
   findExpenseById,
   getExpenses,
   updateExpense,
   deleteExpense,
+  getTotalExpenseByDateRange,
 };
