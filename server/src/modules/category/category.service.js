@@ -12,7 +12,7 @@ const {
 
 
 const createCategoryService = async (userId, categoryData) => {
-  const { name, type } = categoryData;
+  const { name, type, color, icon } = categoryData;
 
   const existingCategory = await findCategoryByName(
     userId,
@@ -21,10 +21,19 @@ const createCategoryService = async (userId, categoryData) => {
   );
 
   if (existingCategory) {
-    throw new ApiError(
-      HTTP_STATUS.CONFLICT,
-      "Category already exists."
-    );
+    if (existingCategory.isActive) {
+      throw new ApiError(
+        HTTP_STATUS.CONFLICT,
+        "Category already exists."
+      );
+    } else {
+      // Restore the previously soft-deleted category
+      existingCategory.isActive = true;
+      existingCategory.color = color || existingCategory.color;
+      existingCategory.icon = icon || existingCategory.icon;
+      await existingCategory.save();
+      return existingCategory;
+    }
   }
 
   const category = await createCategory({
