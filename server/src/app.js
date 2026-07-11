@@ -10,6 +10,7 @@ const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
 const reportsRoutes = require("./modules/reports/reports.routes");
 const budgetRoutes = require("./modules/budget/budget.routes");
 const recurringRoutes = require("./modules/recurring/recurring.routes");
+const notificationRoutes = require("./modules/notification/notification.routes");
 
 
 const notFound = require("./middlewares/notFound.middleware");
@@ -25,6 +26,7 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/reports", reportsRoutes);
 app.use("/api/v1/budgets", budgetRoutes);
 app.use("/api/v1/recurring", recurringRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
 
 
