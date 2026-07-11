@@ -77,6 +77,17 @@ const getTotalExpenseByDateRange = async (
   return result[0]?.totalExpense || 0;
 };
 
+const findRecurringExpense = async (
+  recurringTransaction,
+  date
+) => {
+  return await Expense.findOne({
+    recurringTransaction,
+    date,
+  });
+};
+
+
 module.exports = {
   createExpense,
   findExpenseById,
@@ -84,4 +95,5 @@ module.exports = {
   updateExpense,
   deleteExpense,
   getTotalExpenseByDateRange,
+  findRecurringExpense,
 };

@@ -49,6 +49,12 @@ const expenseSchema = new mongoose.Schema(
       default: PAYMENT_METHODS.CASH,
     },
 
+    recurringTransaction: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RecurringTransaction",
+      default: null,
+    },
+
     date: {
       type: Date,
       default: Date.now,
@@ -79,6 +85,6 @@ expenseSchema.index({
   transactionType: 1,
 });
 
-const Expense= mongoose.model("Expense", expenseSchema);
+const Expense = mongoose.model("Expense", expenseSchema);
 
-module.exports= Expense;
+module.exports = Expense;
