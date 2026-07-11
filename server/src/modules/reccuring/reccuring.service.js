@@ -116,3 +116,27 @@ const updateRecurringService = async (
     updateData
   );
 };
+
+const deleteRecurringService = async (
+  recurringId
+) => {
+  const recurring =
+    await findRecurringById(recurringId);
+
+  if (!recurring) {
+    throw new ApiError(
+      HTTP_STATUS.NOT_FOUND,
+      "Recurring transaction not found."
+    );
+  }
+
+  await deleteRecurring(recurringId);
+};
+
+module.exports = {
+  createRecurringService,
+  getRecurringTransactionsService,
+  getRecurringByIdService,
+  updateRecurringService,
+  deleteRecurringService,
+};
