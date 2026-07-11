@@ -3,15 +3,25 @@ const cron = require("node-cron");
 const {
     getDueRecurringTransactions,
     updateRecurring,
-} = require("../modules/recurring/recurring.repository");
+} = require("../modules/reccuring/reccuring.repository");
 
 const {
     createExpense,
+    findRecurringExpense,
 } = require("../modules/expense/expense.repository");
 
 const {
     calculateNextRunDate,
-} = require("../shared/utils/recurringDate");
+} = require("../shared/utils/reccuringDate");
+
+const {
+    createRecurringNotificationService,
+} = require("../modules/notification/notification.service");
+
+const NOTIFICATION_TYPES = require(
+    "../shared/constants/notificationTypes"
+);
+
 
 const startRecurringJob = () => {
     cron.schedule("* * * * *", async () => {
@@ -35,7 +45,7 @@ const startRecurringJob = () => {
                     continue;
                 }
 
-                await createExpense({
+                const expense = await createExpense({
                     user: recurring.user,
                     category: recurring.category._id,
                     title: recurring.title,
@@ -44,7 +54,17 @@ const startRecurringJob = () => {
                     paymentMethod: recurring.paymentMethod,
                     note: recurring.note,
                     date: recurring.nextRunDate,
+                    recurringTransaction: recurring._id,
                 });
+
+                await createRecurringNotificationService(
+                    recurring.user,
+                    recurring._id,
+                    expense._id,
+                    recurring.nextRunDate,
+                    "Recurring Expense Added",
+                    `${recurring.title} of ₹${recurring.amount} has been added automatically.`
+                );
 
                 const nextRunDate = calculateNextRunDate(
                     recurring.nextRunDate,

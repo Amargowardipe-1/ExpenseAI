@@ -7,18 +7,16 @@ const validate = require("../../middlewares/validate.middleware");
 
 const {
   dateRangeReportValidation,
-} = require("./reports.validation");
-
-const {
+  monthlyReportValidation,
+  yearlyReportValidation,
   categoryReportValidation,
 } = require("./reports.validation");
 
 const {
-  getCategoryReport,
-} = require("./reports.controller");
-
-const {
   getDateRangeReport,
+  getMonthlyReport,
+  getYearlyReport,
+  getCategoryReport,
 } = require("./reports.controller");
 
 router.get(

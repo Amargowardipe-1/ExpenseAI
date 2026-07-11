@@ -1,4 +1,5 @@
 const Notification = require("./notification.model");
+const NOTIFICATION_TYPES = require("../../shared/constants/notificationTypes");
 
 const createNotification = async (notificationData) => {
   return await Notification.create(notificationData);
@@ -84,6 +85,33 @@ const getNotificationCount = async (
   });
 };
 
+
+
+const findBudgetNotification = async (
+  userId,
+  type,
+  month,
+  year
+) => {
+  return await Notification.findOne({
+    user: userId,
+    type,
+    "metadata.month": month,
+    "metadata.year": year,
+  });
+};
+
+const findRecurringNotification = async (
+  recurringId,
+  expenseId
+) => {
+  return await Notification.findOne({
+    type: NOTIFICATION_TYPES.RECURRING_CREATED,
+    "metadata.recurringId": recurringId,
+    "metadata.expenseId": expenseId,
+  });
+};
+
 module.exports = {
   createNotification,
   getNotifications,
@@ -93,4 +121,6 @@ module.exports = {
   markAllAsRead,
   deleteNotification,
   getNotificationCount,
+   findBudgetNotification,
+   findRecurringNotification,
 };

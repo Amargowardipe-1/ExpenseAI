@@ -3,9 +3,8 @@ const ApiResponse = require("../../shared/utils/ApiResponse");
 
 const {
   getDateRangeReportService,
-} = require("./reports.service");
-
-const {
+  getMonthlyReportService,
+  getYearlyReportService,
   getCategoryReportService,
 } = require("./reports.service");
 
@@ -60,6 +59,29 @@ const getMonthlyReport = async (req, res, next) => {
   }
 };
 
+const getYearlyReport = async (req, res, next) => {
+  try {
+    const { year, page, limit } = req.query;
+
+    const report = await getYearlyReportService(
+      req.user._id,
+      Number(year),
+      page,
+      limit
+    );
+
+    return res.status(HTTP_STATUS.OK).json(
+      new ApiResponse(
+        HTTP_STATUS.OK,
+        "Yearly report fetched successfully.",
+        report
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getCategoryReport = async (
   req,
   res,
@@ -89,5 +111,6 @@ const getCategoryReport = async (
 module.exports = {
   getDateRangeReport,
   getMonthlyReport,
+  getYearlyReport,
   getCategoryReport,
 };

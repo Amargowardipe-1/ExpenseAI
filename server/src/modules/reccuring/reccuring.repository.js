@@ -1,4 +1,4 @@
-const RecurringTransaction = require("./recurring.model");
+const RecurringTransaction = require("./reccuring.model");
 
 const createRecurring = async (recurringData) => {
   return await RecurringTransaction.create(recurringData);

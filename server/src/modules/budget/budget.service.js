@@ -1,6 +1,6 @@
 const HTTP_STATUS = require("../../shared/constants/httpStatus");
-const ApiError = require("../../shared/utils/ApiError");
-const BUDGET_STATUS = require("../../shared/constants/budgetStatus");
+const ApiError = require("../../shared/errors/ApiError");
+const BUDGET_STATUS = require("../../shared/constants/budget.Status");
 const {
   getTotalExpenseByDateRange,
 } = require("../expense/expense.repository");
@@ -16,6 +16,16 @@ const {
   updateBudget,
   deleteBudget,
 } = require("./budget.repository");
+
+const {
+  createNotificationService,
+  createBudgetNotificationService,
+} = require("../notification/notification.service");
+
+const NOTIFICATION_TYPES = require(
+  "../../shared/constants/notificationTypes"
+);
+
 
 const createBudgetService = async (
   userId,
@@ -163,22 +173,44 @@ const getBudgetProgressService = async (
           ).toFixed(2)
         );
 
+        
   let status = BUDGET_STATUS.ON_TRACK;
 
-  if (usedPercentage >= 100) {
-    status = BUDGET_STATUS.EXCEEDED;
-  } else if (usedPercentage >= 80) {
-    status = BUDGET_STATUS.WARNING;
-  }
+if (usedPercentage >= 100) {
 
-  return {
-    budget: budget.amount,
-    spent,
-    remaining,
-    usedPercentage,
-    status,
-  };
+  status = BUDGET_STATUS.EXCEEDED;
+
+  await createBudgetNotificationService(
+    userId,
+    NOTIFICATION_TYPES.BUDGET_EXCEEDED,
+    "Budget Exceeded",
+    "You have exceeded your monthly budget.",
+    month,
+    year
+  );
+
+} else if (usedPercentage >= 80) {
+
+  status = BUDGET_STATUS.WARNING;
+
+  await createBudgetNotificationService(
+    userId,
+    NOTIFICATION_TYPES.BUDGET_WARNING,
+    "Budget Warning",
+    `You have used ${usedPercentage}% of your monthly budget.`,
+    month,
+    year
+  );
+}
+
+return {
+  budget: budget.amount,
+  spent,
+  remaining,
+  usedPercentage,
+  status,
 };
+}
 
 module.exports = {
   createBudgetService,
@@ -186,4 +218,4 @@ module.exports = {
   updateBudgetService,
   deleteBudgetService,
    getBudgetProgressService,
-};
+}

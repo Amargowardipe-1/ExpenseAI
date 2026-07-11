@@ -1,10 +1,10 @@
 const HTTP_STATUS = require("../../shared/constants/httpStatus");
-const ApiError = require("../../shared/utils/ApiError");
+const ApiError = require("../../shared/errors/ApiError");
 
 const RECURRING_FREQUENCIES = require("../../shared/constants/recurringFrequencies");
 const {
   calculateNextRunDate,
-} = require("../../shared/utils/recurringDate");
+} = require("../../shared/utils/reccuringDate");
 
 
 const {
@@ -13,7 +13,7 @@ const {
   getRecurringTransactions,
   updateRecurring,
   deleteRecurring,
-} = require("./recurring.repository");
+} = require("./reccuring.repository");
 
 
 

@@ -1,5 +1,6 @@
 const HTTP_STATUS = require("../../shared/constants/httpStatus");
-const ApiError = require("../../shared/utils/ApiError");
+const ApiError = require("../../shared/errors/ApiError");
+const NOTIFICATION_TYPES = require("../../shared/constants/notificationTypes");
 
 const {
     createNotification,
@@ -10,6 +11,8 @@ const {
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    findBudgetNotification,
+    findRecurringNotification,
 } = require("./notification.repository");
 
 const createNotificationService = async (
@@ -87,7 +90,6 @@ const markAsReadService = async (
     return await markAsRead(notificationId);
 };
 
-
 const markAllAsReadService = async (
     userId
 ) => {
@@ -124,6 +126,71 @@ const deleteNotificationService = async (
     await deleteNotification(notificationId);
 };
 
+//createBudgetNotificationService
+const createBudgetNotificationService = async (
+  userId,
+  type,
+  title,
+  message,
+  month,
+  year
+) => {
+  const notification =
+    await findBudgetNotification(
+      userId,
+      type,
+      month,
+      year
+    );
+
+  if (notification) {
+    return;
+  }
+
+  return await createNotificationService({
+    user: userId,
+    type,
+    title,
+    message,
+    metadata: {
+      month,
+      year,
+    },
+  });
+};
+
+// createRecurringNotificationService
+const createRecurringNotificationService = async (
+  userId,
+  recurringId,
+  expenseId,
+  scheduledDate,
+  title,
+  message
+) => {
+  const notification =
+    await findRecurringNotification(
+      recurringId,
+      expenseId
+    );
+
+  if (notification) {
+    return;
+  }
+
+  return await createNotificationService({
+    user: userId,
+    type: NOTIFICATION_TYPES.RECURRING_CREATED,
+    title,
+    message,
+    metadata: {
+      recurringId,
+      expenseId,
+      scheduledDate,
+    },
+  });
+};
+
 module.exports = {
     createNotificationService,
     getNotificationsService,
@@ -131,4 +198,6 @@ module.exports = {
     markAsReadService,
     markAllAsReadService,
     deleteNotificationService,
+    createBudgetNotificationService,
+    createRecurringNotificationService,
 };

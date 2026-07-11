@@ -8,7 +8,7 @@ const {
   createRecurringValidation,
   updateRecurringValidation,
   recurringIdValidation,
-} = require("./recurring.validation");
+} = require("./reccuring.validation");
 
 const {
   createRecurring,
@@ -16,7 +16,7 @@ const {
   getRecurringById,
   updateRecurring,
   deleteRecurring,
-} = require("./recurring.controller");
+} = require("./reccuring.controller");
 
 router.post(
   "/",

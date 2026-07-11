@@ -43,6 +43,13 @@ const notificationSchema = new mongoose.Schema(
     }
 );
 
+notificationSchema.index({
+  user: 1,
+  type: 1,
+  "metadata.month": 1,
+  "metadata.year": 1,
+});
+
 module.exports = mongoose.model(
     "Notification",
     notificationSchema

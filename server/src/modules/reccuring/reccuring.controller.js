@@ -7,7 +7,7 @@ const {
   getRecurringByIdService,
   updateRecurringService,
   deleteRecurringService,
-} = require("./recurring.service");
+} = require("./reccuring.service");
 
 const createRecurring = async (
   req,

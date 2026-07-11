@@ -9,7 +9,7 @@ const expenseRoutes = require("./modules/expense/expense.routes");
 const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
 const reportsRoutes = require("./modules/reports/reports.routes");
 const budgetRoutes = require("./modules/budget/budget.routes");
-const recurringRoutes = require("./modules/recurring/recurring.routes");
+const recurringRoutes = require("./modules/reccuring/reccuring.routes");
 const notificationRoutes = require("./modules/notification/notification.routes");
 
 
