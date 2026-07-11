@@ -2,6 +2,10 @@ const HTTP_STATUS = require("../../shared/constants/httpStatus");
 const ApiError = require("../../shared/utils/ApiError");
 
 const RECURRING_FREQUENCIES = require("../../shared/constants/recurringFrequencies");
+const {
+  calculateNextRunDate,
+} = require("../../shared/utils/recurringDate");
+
 
 const {
   createRecurring,
@@ -12,35 +16,7 @@ const {
 } = require("./recurring.repository");
 
 
-const calculateNextRunDate = (
-  currentDate,
-  frequency
-) => {
-  const nextDate = new Date(currentDate);
 
-  switch (frequency) {
-    case RECURRING_FREQUENCIES.DAILY:
-      nextDate.setDate(nextDate.getDate() + 1);
-      break;
-
-    case RECURRING_FREQUENCIES.WEEKLY:
-      nextDate.setDate(nextDate.getDate() + 7);
-      break;
-
-    case RECURRING_FREQUENCIES.MONTHLY:
-      nextDate.setMonth(nextDate.getMonth() + 1);
-      break;
-
-    case RECURRING_FREQUENCIES.YEARLY:
-      nextDate.setFullYear(nextDate.getFullYear() + 1);
-      break;
-
-    default:
-      break;
-  }
-
-  return nextDate;
-};
 
 const createRecurringService = async (
   userId,
