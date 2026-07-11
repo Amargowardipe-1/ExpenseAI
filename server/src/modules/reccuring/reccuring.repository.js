@@ -9,12 +9,18 @@ const findRecurringById = async (recurringId) => {
     .populate("category");
 };
 
-const getRecurringTransactions = async (userId) => {
+const getRecurringTransactions = async (
+  userId,
+  skip,
+  limit
+) => {
   return await RecurringTransaction.find({
     user: userId,
   })
     .populate("category")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
 };
 
 const updateRecurring = async (
