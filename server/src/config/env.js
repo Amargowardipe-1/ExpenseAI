@@ -1,0 +1,1 @@
+GEMINI_API_KEY_HRM: process.env.GEMINI_API_KEY
