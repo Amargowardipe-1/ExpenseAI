@@ -8,6 +8,7 @@ const {
   getExpensesService,
   updateExpenseService,
   getExpenseByIdService,
+  deleteExpenseService,
 } = require("./expense.service");
 
 const createExpense = async (req, res, next) => {
