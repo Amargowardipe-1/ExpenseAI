@@ -12,7 +12,7 @@ const budgetRoutes = require("./modules/budget/budget.routes");
 const recurringRoutes = require("./modules/reccuring/reccuring.routes");
 const notificationRoutes = require("./modules/notification/notification.routes");
 const aiReceiptRoutes = require("./modules/ai-receipt/aiReceipt.routes");
-
+const aiVoiceRoutes = require( "./modules/ai-voice/aiVoice.routes");
 
 
 const notFound = require("./middlewares/notFound.middleware");
@@ -30,6 +30,7 @@ app.use("/api/v1/budgets", budgetRoutes);
 app.use("/api/v1/recurring", recurringRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/ai-receipt",aiReceiptRoutes);
+app.use("/api/v1/ai-voice", aiVoiceRoutes);
 
 
 

@@ -1,6 +1,8 @@
-const normalizeReceiptResponse = (data = {}) => {
+const normalizeExpenseAIResponse = (data = {}) => {
   return {
     merchant: data.merchant ?? null,
+    
+     title: data.title ?? null,
 
     amount:
       typeof data.amount === "number"
@@ -33,4 +35,4 @@ const normalizeReceiptResponse = (data = {}) => {
   };
 };
 
-module.exports = normalizeReceiptResponse;
+module.exports = normalizeExpenseAIResponse;

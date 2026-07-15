@@ -3,7 +3,7 @@ const router = express.Router();
 
 const authMiddleware = require("../../middlewares/auth.middleware");
 const validate = require("../../middlewares/validate.middleware");
-const upload = require("../../middlewares/upload.middleware");
+const { uploadImage } = require("../../middlewares/upload.middleware");
 
 const {
   analyzeReceiptValidation,
@@ -16,7 +16,7 @@ const {
 router.post(
   "/upload",
   authMiddleware,
-  upload.single("receipt"),
+  uploadImage.single("receipt"),
   analyzeReceiptValidation,
   validate,
   uploadReceipt

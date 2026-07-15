@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { GoogleGenAI } = require("@google/genai");
-const normalizeReceiptResponse = require("../../shared/utils/normalizeReceiptResponse");
+const normalizeExpenseAIResponse = require("../../shared/utils/normalizeExpenseAIResponse");
 const { RECEIPT_ANALYSIS_PROMPT } = require("./aiReceipt.prompt");
 const extractJson = require("../../shared/utils/extractJson");
 const ApiError = require("../../shared/errors/ApiError");
@@ -56,7 +56,7 @@ const analyzeReceiptImage = async (imagePath, mimeType) => {
             console.log(`[AI Receipt] Raw response: ${text}`);
 
             const parsedResponse = extractJson(text);
-            return normalizeReceiptResponse(parsedResponse);
+            return normalizeExpenseAIResponse(parsedResponse);
 
         } catch (error) {
             const errMsg = error.message || String(error);

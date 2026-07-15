@@ -2,67 +2,92 @@ const cron = require("node-cron");
 const fs = require("fs");
 const path = require("path");
 
-const UPLOADS_DIR = path.join(
+const {
+  STORAGE_FOLDERS,
+} = require("../shared/constants/storage.constants");
+
+const TEMP_DIR = path.join(
   __dirname,
-  "../temp/uploads"
+  "../temp"
 );
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
 cron.schedule("*/15 * * * *", () => {
   try {
-    if (!fs.existsSync(UPLOADS_DIR)) {
-      return;
-    }
 
-    const userFolders =
-      fs.readdirSync(UPLOADS_DIR);
+    const folders = [
+      STORAGE_FOLDERS.IMAGE,
+      STORAGE_FOLDERS.VOICE,
+    ];
 
-    for (const folder of userFolders) {
+    for (const folder of folders) {
 
-      const folderPath = path.join(
-        UPLOADS_DIR,
+      const storagePath = path.join(
+        TEMP_DIR,
         folder
       );
 
-      if (
-        !fs.statSync(folderPath).isDirectory()
-      ) {
+      if (!fs.existsSync(storagePath)) {
         continue;
       }
 
-      const files =
-        fs.readdirSync(folderPath);
+      const userFolders =
+        fs.readdirSync(storagePath);
 
-      for (const file of files) {
+      for (const userFolder of userFolders) {
 
-        const filePath = path.join(
-          folderPath,
-          file
+        const userFolderPath = path.join(
+          storagePath,
+          userFolder
         );
 
-        const stats =
-          fs.statSync(filePath);
+        if (
+          !fs
+            .statSync(userFolderPath)
+            .isDirectory()
+        ) {
+          continue;
+        }
 
-        const age =
-          Date.now() -
-          stats.birthtimeMs;
+        const files =
+          fs.readdirSync(userFolderPath);
 
-        if (age >= FIFTEEN_MINUTES) {
+        for (const file of files) {
 
-          fs.unlinkSync(filePath);
+          const filePath = path.join(
+            userFolderPath,
+            file
+          );
 
-          console.log(
-            `Deleted temp file: ${filePath}`
+          const stats =
+            fs.statSync(filePath);
+
+          const age =
+            Date.now() -
+            stats.mtimeMs;
+
+          if (
+            age >= FIFTEEN_MINUTES
+          ) {
+
+            fs.unlinkSync(filePath);
+
+            console.log(
+              `Deleted temp file: ${filePath}`
+            );
+          }
+        }
+
+        // Delete empty user folder
+        if (
+          fs.readdirSync(userFolderPath)
+            .length === 0
+        ) {
+          fs.rmdirSync(
+            userFolderPath
           );
         }
-      }
-
-      // Delete empty user folder
-      if (
-        fs.readdirSync(folderPath).length === 0
-      ) {
-        fs.rmdirSync(folderPath);
       }
     }
 

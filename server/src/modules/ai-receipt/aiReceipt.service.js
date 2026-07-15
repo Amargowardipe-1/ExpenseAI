@@ -40,7 +40,7 @@ const uploadReceiptService = async (
 
   const requiresManualReview =
     analysis.confidence <
-    AI_CONFIDENCE.MIN_RECEIPT_CONFIDENCE;
+    AI_CONFIDENCE.MIN_EXPENSE_CONFIDENCE;
 
   let analysisStatus = AI_ANALYSIS_STATUS.SUCCESS;
   if (requiresManualReview) {
