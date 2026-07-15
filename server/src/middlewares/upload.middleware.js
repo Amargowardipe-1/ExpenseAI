@@ -3,58 +3,86 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const userFolder = path.join(
-      __dirname,
-      "../temp/uploads",
-      req.user._id.toString()
-    );
+const {
+  MIME_TYPES,
+  FILE_SIZE,
+} = require("../shared/constants/file.constants");
 
-    fs.mkdirSync(userFolder, {
-      recursive: true,
-    });
+const createStorage = (folderName) =>
+  multer.diskStorage({
+    destination: (req, file, cb) => {
+      const userFolder = path.join(
+        __dirname,
+        `../temp/${folderName}`,
+        req.user._id.toString()
+      );
 
-    cb(null, userFolder);
-  },
+      fs.mkdirSync(userFolder, {
+        recursive: true,
+      });
 
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
+      cb(null, userFolder);
+    },
 
-    const uniqueName =
-      `${Date.now()}_${crypto.randomUUID()}${ext}`;
+    filename: (req, file, cb) => {
+      const extension = path.extname(
+        file.originalname
+      );
 
-    cb(null, uniqueName);
-  },
-});
+      const fileName =
+        `${Date.now()}_${crypto.randomUUID()}${extension}`;
 
-const fileFilter = (req, file, cb) => {
+      cb(null, fileName);
+    },
+  });
 
-  const allowedMimeTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/jpg",
-    "image/webp",
-  ];
+const createFileFilter = (
+  allowedMimeTypes
+) => {
+  return (req, file, cb) => {
 
-  if (
-    !allowedMimeTypes.includes(file.mimetype)
-  ) {
-    return cb(
-      new Error("Only image files are allowed."),
-      false
-    );
-  }
+    if (
+      !allowedMimeTypes.includes(
+        file.mimetype
+      )
+    ) {
+      return cb(
+        new Error(
+          "Unsupported file type."
+        ),
+        false
+      );
+    }
 
-  cb(null, true);
+    cb(null, true);
+  };
 };
 
-const upload = multer({
-  storage,
-  fileFilter,
+const uploadImage = multer({
+  storage: createStorage("uploads"),
+
+  fileFilter: createFileFilter(
+    MIME_TYPES.IMAGE
+  ),
+
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10 MB
+    fileSize: FILE_SIZE.IMAGE,
   },
 });
 
-module.exports = upload;
+const uploadAudio = multer({
+  storage: createStorage("voice"),
+
+  fileFilter: createFileFilter(
+    MIME_TYPES.AUDIO
+  ),
+
+  limits: {
+    fileSize: FILE_SIZE.AUDIO,
+  },
+});
+
+module.exports = {
+  uploadImage,
+  uploadAudio,
+};
