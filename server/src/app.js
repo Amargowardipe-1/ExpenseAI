@@ -36,7 +36,7 @@ app.use("/api/v1/ai-voice", aiVoiceRoutes);
 
 
 
-
+// just for testing
 app.get("/api/v1/health", (req, res) => {
   res.status(200).json({
     success: true,
