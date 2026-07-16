@@ -7,10 +7,10 @@ const normalizeExpenseAIResponse = require("../../shared/utils/normalizeExpenseA
 const { VOICE_ANALYSIS_PROMPT } = require("./aiVoice.prompt");
 
 const CANDIDATE_MODELS = [
-    "gemini-flash-latest",      // Gemini 1.5 Flash (Confirmed Working)
-    "gemini-2.0-flash",         // Gemini 2.0 Flash
-    "gemini-2.0-flash-lite",    // Gemini 2.0 Flash Lite
-    "gemini-2.5-flash",         // Gemini 2.5 Flash
+    "gemini-3.1-flash-lite",    // ✅ Primary (Confirmed Working)
+    "gemini-flash-lite-latest", // ✅ Fallback (Confirmed Working)
+    "gemini-2.0-flash",         // Fallback (may hit quota)
+    "gemini-2.0-flash-lite",    // Fallback (may hit quota)
 ];
 
 const analyzeVoice = async (audioPath, mimeType) => {
@@ -60,10 +60,16 @@ const analyzeVoice = async (audioPath, mimeType) => {
         } catch (error) {
             const errMsg = error.message || String(error);
             const isQuotaError = errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED") || errMsg.includes("quota");
+            const isUnavailable = errMsg.includes("503") || errMsg.includes("UNAVAILABLE") || errMsg.includes("high demand");
+            const isNotFound = errMsg.includes("404") || errMsg.includes("NOT_FOUND") || errMsg.includes("no longer available");
             
             if (isQuotaError) {
                 hadQuotaError = true;
                 console.warn(`[AI Voice] ⚠️  Quota limit reached for ${model}`);
+            } else if (isUnavailable) {
+                console.warn(`[AI Voice] ⚠️  Model unavailable (503), trying next: ${model}`);
+            } else if (isNotFound) {
+                console.warn(`[AI Voice] ⚠️  Model not found, trying next: ${model}`);
             } else {
                 console.error(`[AI Voice] ❌ Error with ${model}:`, errMsg.substring(0, 300));
             }

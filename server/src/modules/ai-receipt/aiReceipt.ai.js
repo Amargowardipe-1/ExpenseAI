@@ -8,10 +8,10 @@ const HTTP_STATUS = require("../../shared/constants/httpStatus");
 
 // Models to try in priority order
 const CANDIDATE_MODELS = [
-    "gemini-flash-latest",      // Gemini 1.5 Flash
-    "gemini-2.0-flash",         // Gemini 2.0 Flash
-    "gemini-2.0-flash-lite",    // Gemini 2.0 Flash Lite
-    "gemini-2.5-flash",         // Gemini 2.5 Flash
+    "gemini-3.1-flash-lite",    // ✅ Primary (Confirmed Working)
+    "gemini-flash-lite-latest", // ✅ Fallback (Confirmed Working)
+    "gemini-2.0-flash",         // Fallback (may hit quota)
+    "gemini-2.0-flash-lite",    // Fallback (may hit quota)
 ];
 
 const analyzeReceiptImage = async (imagePath, mimeType) => {

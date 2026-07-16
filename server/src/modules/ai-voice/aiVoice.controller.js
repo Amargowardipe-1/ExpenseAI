@@ -41,11 +41,12 @@ const analyzeVoiceController = async (
         req.body.language
       );
 
-    return ApiResponse.success(
-      res,
-      HTTP_STATUS.OK,
-      "Voice analyzed successfully.",
-      result
+    return res.status(HTTP_STATUS.OK).json(
+      new ApiResponse(
+        HTTP_STATUS.OK,
+        "Voice analyzed successfully.",
+        result
+      )
     );
 
   } catch (error) {
