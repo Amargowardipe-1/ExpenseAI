@@ -37,6 +37,25 @@ const createExpenseService = async (userId, expenseData) => {
     user: userId,
   });
 
+  if (expense.transactionType === "Expense" && expense.amount >= 10000) {
+    try {
+      const { createNotificationService } = require("../notification/notification.service");
+      const NOTIFICATION_TYPES = require("../../shared/constants/notificationTypes");
+      await createNotificationService({
+        user: userId,
+        type: NOTIFICATION_TYPES.LARGE_EXPENSE,
+        title: "Large Expense Alert",
+        message: `You recorded a large expense of ₹${expense.amount} for "${expense.title}".`,
+        metadata: {
+          expenseId: expense._id,
+          amount: expense.amount,
+        },
+      });
+    } catch (err) {
+      console.log("Failed to create large expense notification:", err);
+    }
+  }
+
   return expense;
 };
 
@@ -110,10 +129,31 @@ const updateExpenseService = async (
   delete updateData.user;
   delete updateData.isDeleted;
 
-  return await updateExpense(
+  const updatedExpense = await updateExpense(
     expenseId,
     updateData
   );
+
+  if (updatedExpense.transactionType === "Expense" && updatedExpense.amount >= 10000) {
+    try {
+      const { createNotificationService } = require("../notification/notification.service");
+      const NOTIFICATION_TYPES = require("../../shared/constants/notificationTypes");
+      await createNotificationService({
+        user: userId,
+        type: NOTIFICATION_TYPES.LARGE_EXPENSE,
+        title: "Large Expense Alert",
+        message: `You updated a large expense: ₹${updatedExpense.amount} for "${updatedExpense.title}".`,
+        metadata: {
+          expenseId: updatedExpense._id,
+          amount: updatedExpense.amount,
+        },
+      });
+    } catch (err) {
+      console.log("Failed to create large expense notification:", err);
+    }
+  }
+
+  return updatedExpense;
 };
 
 const deleteExpenseService = async (

@@ -6,4 +6,5 @@ module.exports = {
   RECURRING_CREATED: "Recurring Created",
 
   SYSTEM: "System",
+  LARGE_EXPENSE: "Large Expense",
 };
