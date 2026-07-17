@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { register, login, me,  refreshAccess, logout } = require("./auth.controller");
+const { register, login, me, refreshAccess, logout, changePassword, deleteAccount } = require("./auth.controller");
 const {
   registerValidation,
   loginValidation,
@@ -46,6 +46,20 @@ router.post(
   "/logout",
   authMiddleware,
   logout
+);
+
+router.post(
+  "/change-password",
+  authMiddleware,
+  changePasswordValidation,
+  validate,
+  changePassword
+);
+
+router.delete(
+  "/delete-account",
+  authMiddleware,
+  deleteAccount
 );
 
 module.exports = router;

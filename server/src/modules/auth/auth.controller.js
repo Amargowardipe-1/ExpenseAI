@@ -84,10 +84,44 @@ const logout = async (req, res, next) => {
   }
 };
 
+const changePassword = async (req, res, next) => {
+  try {
+    const { changePasswordUser } = require("./auth.service");
+    await changePasswordUser(req.user._id, req.body);
+
+    return res.status(HTTP_STATUS.OK).json(
+      new ApiResponse(
+        HTTP_STATUS.OK,
+        "Password changed successfully."
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteAccount = async (req, res, next) => {
+  try {
+    const { deleteUserAccount } = require("./auth.service");
+    await deleteUserAccount(req.user._id);
+
+    return res.status(HTTP_STATUS.OK).json(
+      new ApiResponse(
+        HTTP_STATUS.OK,
+        "Account deleted successfully."
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   me,
   refreshAccess,
   logout,
+  changePassword,
+  deleteAccount,
 };

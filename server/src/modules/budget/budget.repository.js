@@ -28,7 +28,7 @@ const updateBudget = async (
     budgetId,
     updateData,
     {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     }
   );

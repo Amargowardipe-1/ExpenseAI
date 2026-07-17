@@ -15,6 +15,7 @@ const {
      updateRefreshToken,
   findUserByIdWithRefreshToken,
   removeRefreshToken,
+  findUserByIdWithPassword,
   updatePassword,
 } = require("./auth.repository");
 
@@ -159,10 +160,58 @@ const logoutUser = async (userId) => {
   return null;
 };
 
+// change user password
+const changePasswordUser = async (userId, { currentPassword, newPassword }) => {
+  const user = await findUserByIdWithPassword(userId);
+
+  if (!user) {
+    throw new ApiError(
+      HTTP_STATUS.NOT_FOUND,
+      "User not found."
+    );
+  }
+
+  const isPasswordMatched = await bcrypt.compare(
+    currentPassword,
+    user.password
+  );
+
+  if (!isPasswordMatched) {
+    throw new ApiError(
+      HTTP_STATUS.UNAUTHORIZED,
+      "Invalid current password."
+    );
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 12);
+  await updatePassword(userId, hashedPassword);
+
+  return null;
+};
+
+// delete user account and all user data
+const deleteUserAccount = async (userId) => {
+  const User = require("../user/user.model");
+  const Expense = require("../expense/expense.model");
+  const Budget = require("../budget/budget.model");
+  const Category = require("../category/category.model");
+  const Notification = require("../notification/notification.model");
+
+  await User.findByIdAndDelete(userId);
+  await Expense.deleteMany({ user: userId });
+  await Budget.deleteMany({ user: userId });
+  await Category.deleteMany({ user: userId });
+  await Notification.deleteMany({ user: userId });
+
+  return null;
+};
+
 module.exports = {
   registerUser,
   loginUser, 
   getCurrentUser,
   refreshAccessToken,
   logoutUser,
+  changePasswordUser,
+  deleteUserAccount,
 };

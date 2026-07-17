@@ -79,32 +79,32 @@ const updateBudgetService = async (
   budgetId,
   updateData
 ) => {
-
-    const existingBudget =
-  await findBudgetByUserAndMonth(
-    userId,
-    month,
-    year
-  );
-
-if (
-  existingBudget &&
-  existingBudget._id.toString() !== budgetId
-) {
-  throw new ApiError(
-    HTTP_STATUS.CONFLICT,
-    "Budget already exists for this month."
-  );
-}
-
-  const budget = await findBudgetById(
-    budgetId
-  );
+  const budget = await findBudgetById(budgetId);
 
   if (!budget) {
     throw new ApiError(
       HTTP_STATUS.NOT_FOUND,
       "Budget not found."
+    );
+  }
+
+  const m = updateData.month !== undefined ? updateData.month : budget.month;
+  const y = updateData.year !== undefined ? updateData.year : budget.year;
+  const userId = budget.user;
+
+  const existingBudget = await findBudgetByUserAndMonth(
+    userId, 
+    m,
+    y
+  );
+
+  if (
+    existingBudget &&
+    existingBudget._id.toString() !== budgetId
+  ) {
+    throw new ApiError(
+      HTTP_STATUS.CONFLICT,
+      "Budget already exists for this month."
     );
   }
 
